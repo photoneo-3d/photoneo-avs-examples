@@ -1,0 +1,238 @@
+extern public GenAddress Photoneo3DSensor = GenAddress(VendorName: "Photoneo", TLType: "Custom", DeviceID: "PhotoneoTL_DEV_InstalledExamples-color-example")
+extern public GevAddress Photone3DSensorAddress = "10.6.113.121"
+
+//:SECTIONSVISIBILITY Visible
+//:USETYPE WORKERTASK
+public Main()
+{
+
+section INITIALIZE:
+	//Initialize section is executed only once at the beginning of the program.
+
+	//Read DeviceId from memory.
+	//This parameter "Photoneo3DSensor" can be edited in the "Project Explorer" window.
+	parameters read
+	{
+		outputs: Photoneo3DSensor, Photone3DSensorAddress
+	}
+	(
+		outPhotoneo3DSensor: con_e88df627_1fec_4f12_b854_27bbca417495
+		outPhotone3DSensorAddress: con_23173957_8bf8_4ca7_bc85_589ed8e327e0
+	)
+
+	//Set camera trigger type to "Software".
+	//:HIDDENPORT[inScope] TRUE
+	//:HIDDENPORT[inParameterName] TRUE
+	//:HIDDENPORT[inVerify] TRUE
+	disabled GenICam_SetEnumParameter
+	(
+		inAddress: con_e88df627_1fec_4f12_b854_27bbca417495
+		inScope: Device
+		inParameterName: "PhotoneoTriggerMode"
+		inValue: "Software"
+		inVerify: True
+	)
+
+	//:HIDDENPORT[inParameterName] TRUE
+	//:HIDDENPORT[inVerify] TRUE
+	GigEVision_SetEnumParameter
+	(
+		inAddress: con_23173957_8bf8_4ca7_bc85_589ed8e327e0
+		inParameterName: "TriggerMode"
+		inValue: "Off"
+		inVerify: True
+	)
+
+	//Change parameter "UseFixedDataOrdering" to false.
+	//:HIDDENPORT[inScope] TRUE
+	//:HIDDENPORT[inParameterName] TRUE
+	//:HIDDENPORT[inVerify] TRUE
+	disabled GenICam_SetBoolParameter
+	(
+		inAddress: con_e88df627_1fec_4f12_b854_27bbca417495
+		inScope: Device
+		inParameterName: "UseFixedDataOrdering"
+		inValue: False
+		inVerify: False
+	)
+
+	//Start camera acquisition.
+	//:HIDDENPORT[inPixelFormat] TRUE
+	//:HIDDENPORT[inInputQueueSize] TRUE
+	disabled GenICam_StartAcquisition
+	(
+		inAddress: con_e88df627_1fec_4f12_b854_27bbca417495
+		inPixelFormat: ""
+		inInputQueueSize: 1
+	)
+
+	//:HIDDENPORT[inPixelFormat] TRUE
+	//:HIDDENPORT[inInputQueueSize] TRUE
+	GigEVision_StartAcquisition
+	(
+		inAddress: con_23173957_8bf8_4ca7_bc85_589ed8e327e0
+		inPixelFormat: ""
+		inInputQueueSize: 1
+	)
+
+section ACQUIRE:
+	//In the Aquire section program is waiting for new frames from the camera.
+
+	//Trigger camera - send software trigger to the camera.
+	//:HIDDENPORT[inScope] TRUE
+	//:HIDDENPORT[inCommandName] TRUE
+	//:HIDDENPORT[inActivationMode] TRUE
+	//:HIDDENPORT[inVerifyAccess] TRUE
+	disabled GenICam_ExecuteCommand
+	(
+		inAddress: con_e88df627_1fec_4f12_b854_27bbca417495
+		inScope: Device
+		inCommandName: "TriggerFrame"
+		inActivationMode: WhenTrue
+		inActivation: True
+		inVerifyAccess: True
+	)
+
+	//:HIDDENPORT[inCommandName] TRUE
+	//:HIDDENPORT[inActivationMode] TRUE
+	//:HIDDENPORT[inVerifyAccess] TRUE
+	disabled GigEVision_ExecuteCommand
+	(
+		inAddress: con_23173957_8bf8_4ca7_bc85_589ed8e327e0
+		inCommandName: "TriggerFrame"
+		inActivationMode: WhenTrue
+		inActivation: True
+		inVerifyAccess: True
+	)
+
+	//Get images from camera. Ths tool is a loop generator - it will be executed many times.
+	//:HIDDENPORT[inPixelFormat] TRUE
+	//:HIDDENPORT[inInputQueueSize] TRUE
+	//:HIDDENPORT[inTimeout] TRUE
+	//:HIDDENPORT[outFrameID] FALSE
+	//:HIDDENPORT[outTimestamp] TRUE
+	disabled GenICam_GrabMultiPartImage
+	(
+		inAddress: con_e88df627_1fec_4f12_b854_27bbca417495
+		inPixelFormat: Nil
+		inInputQueueSize: 1
+		inTimeout: 5000
+		outFramePart1: Nil
+		outFramePart2: Nil
+		outFramePart3: Nil
+		outFramePart4: Nil
+		outFrameID: Nil
+		outTimestamp: Nil
+	)
+
+	//:HIDDENPORT[inPixelFormat] TRUE
+	//:HIDDENPORT[inInputQueueSize] TRUE
+	//:HIDDENPORT[inTimeout] TRUE
+	//:HIDDENPORT[outFramePart4] TRUE
+	//:HIDDENPORT[outFrameID] TRUE
+	//:HIDDENPORT[outTimestamp] TRUE
+	GigEVision_GrabMultiPartImage
+	(
+		inAddress: con_23173957_8bf8_4ca7_bc85_589ed8e327e0
+		inPixelFormat: Nil
+		inInputQueueSize: 1
+		inTimeout: 5000
+		outFramePart1: con_0ca5dc13_bf69_45d7_80ed_e8b6ac64f8f7
+		outFramePart2: con_5f47547b_8c68_4c6f_996d_340313f4b18f
+		outFramePart3: con_400a2f62_d07b_4239_9dfc_67e03ef0d950
+		outFramePart4: con_db9b29f4_c710_4308_8f33_70f1f5c93d42
+		outFrameID: Nil
+		outTimestamp: Nil
+	)
+
+section PROCESS:
+	//In the Process section all image / data processing should be handled.
+
+section FINALIZE:
+	//In the Finalize section program should finalize all connections ( it is excuted once at the end of the program ).
+}
+
+//:SECTIONSVISIBILITY Visible
+public MainLoop()
+{
+
+section INITIALIZE:
+	parameters read
+	{
+		outputs: Photoneo3DSensor
+	}
+	(
+		outPhotoneo3DSensor: con_eb6b7eac_353a_49d3_b73d_2b8ae1104080
+	)
+
+	//Set trigger type to software
+	//:HIDDENPORT[inScope] TRUE
+	//:HIDDENPORT[inParameterName] TRUE
+	//:HIDDENPORT[inVerify] TRUE
+	GenICam_SetEnumParameter
+	(
+		inAddress: con_eb6b7eac_353a_49d3_b73d_2b8ae1104080
+		inScope: Device
+		inParameterName: "PhotoneoTriggerMode"
+		inValue: "Software"
+		inVerify: True
+	)
+
+	//Change UseFixedDataOrdering
+	//:HIDDENPORT[inScope] TRUE
+	//:HIDDENPORT[inParameterName] TRUE
+	//:HIDDENPORT[inVerify] TRUE
+	GenICam_SetBoolParameter
+	(
+		inAddress: con_eb6b7eac_353a_49d3_b73d_2b8ae1104080
+		inScope: Device
+		inParameterName: "UseFixedDataOrdering"
+		inValue: False
+		inVerify: False
+	)
+
+section ACQUIRE:
+	//:HIDDENPORT[inPixelFormat] TRUE
+	//:HIDDENPORT[inInputQueueSize] TRUE
+	GenICam_StartAcquisition
+	(
+		inAddress: con_eb6b7eac_353a_49d3_b73d_2b8ae1104080
+		inPixelFormat: ""
+		inInputQueueSize: 1
+	)
+
+	//Trigger camera
+	//:HIDDENPORT[inScope] TRUE
+	//:HIDDENPORT[inCommandName] TRUE
+	//:HIDDENPORT[inActivationMode] TRUE
+	//:HIDDENPORT[inVerifyAccess] TRUE
+	GenICam_ExecuteCommand
+	(
+		inAddress: con_eb6b7eac_353a_49d3_b73d_2b8ae1104080
+		inScope: Device
+		inCommandName: "TriggerFrame"
+		inActivationMode: WhenTrue
+		inActivation: True
+		inVerifyAccess: True
+	)
+
+	//:HIDDENPORT[inPixelFormat] TRUE
+	//:HIDDENPORT[inInputQueueSize] TRUE
+	//:HIDDENPORT[inTimeout] TRUE
+	//:HIDDENPORT[outFrameID] FALSE
+	//:HIDDENPORT[outTimestamp] TRUE
+	GenICam_GrabMultiPartImage
+	(
+		inAddress: con_eb6b7eac_353a_49d3_b73d_2b8ae1104080
+		inPixelFormat: Nil
+		inInputQueueSize: 1
+		inTimeout: 5000
+		outFramePart1: Nil
+		outFramePart2: Nil
+		outFramePart3: Nil
+		outFramePart4: Nil
+		outFrameID: Nil
+		outTimestamp: Nil
+	)
+}
+

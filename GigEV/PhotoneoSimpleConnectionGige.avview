@@ -1,0 +1,56 @@
+﻿<ViewSets Current="Custom1">
+  <ViewSet Name="Custom1">
+    <HSplit>
+      <VSplit>
+        <Views Width="0.496" Height="0.496">
+          <View Type="ImageView">
+            <Output Name="con_0ca5dc13_bf69_45d7_80ed_e8b6ac64f8f7" Macro="Main" Start="Main" Instance="0" />
+            <ViewState>
+              <ViewMode Mode="Manual" Scale="0.25" X="422" Y="190" />
+            </ViewState>
+          </View>
+        </Views>
+        <Views Width="0.496" Height="0.496">
+          <View Type="ImageView">
+            <Output Name="con_5f47547b_8c68_4c6f_996d_340313f4b18f" Macro="Main" Start="Main" Instance="0" />
+            <ViewState>
+              <ViewMode Mode="Manual" Scale="0.4" X="375" Y="190" />
+            </ViewState>
+          </View>
+        </Views>
+      </VSplit>
+      <VSplit>
+        <Views Width="0.496" Height="0.496">
+          <View Type="ImageView">
+            <Output Name="con_400a2f62_d07b_4239_9dfc_67e03ef0d950" Macro="Main" Start="Main" Instance="0" />
+          </View>
+        </Views>
+        <Views Width="0.496" Height="0.496">
+          <View Type="ImageView">
+            <Output Name="con_db9b29f4_c710_4308_8f33_70f1f5c93d42" Macro="Main" Start="Main" Instance="0" />
+          </View>
+        </Views>
+      </VSplit>
+    </HSplit>
+  </ViewSet>
+  <ViewSet Name="Custom2">
+    <HSplit>
+      <VSplit>
+        <Views Width="0.496" Height="0.496">
+          <View />
+        </Views>
+        <Views Width="0.498" Height="0.496">
+          <View />
+        </Views>
+      </VSplit>
+      <VSplit>
+        <Views Width="0.496" Height="0.496">
+          <View />
+        </Views>
+        <Views Width="0.498" Height="0.496">
+          <View />
+        </Views>
+      </VSplit>
+    </HSplit>
+  </ViewSet>
+</ViewSets>

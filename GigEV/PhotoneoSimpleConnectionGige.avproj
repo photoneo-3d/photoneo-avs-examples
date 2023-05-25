@@ -1,0 +1,6 @@
+﻿<AuroraVisionProject Name="PhotoneoSimpleConnectionGige" Version="5.2.10" Revision="92454" Product="Professional" StartUpProgramName="Main">
+  <Files>
+    <Program Path="PhotoneoSimpleConnectionGige.avcode" />
+    <View Path="PhotoneoSimpleConnectionGige.avview" />
+  </Files>
+</AuroraVisionProject>
