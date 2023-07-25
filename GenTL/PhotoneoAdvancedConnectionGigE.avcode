@@ -1,0 +1,551 @@
+extern public GevAddress Photoneo3DSensor = "169.254.59.97"
+
+//:SECTIONSVISIBILITY Visible
+//:USETYPE WORKERTASK
+public Main()
+{
+
+section INITIALIZE:
+	//Initialize section is executed only once at the beginning of the program.
+
+	//This step macrofilter initializes parameters of the camera.
+	InitializeCamera
+	(
+	)
+
+section ACQUIRE:
+	//In the Aquire section program is waiting for new frames from the camera.
+
+	//Read DeviceId from memory.
+	//This parameter "Photoneo3DSensor" can be edited in the "Project Explorer" window.
+	parameters read
+	{
+		outputs: Photoneo3DSensor
+	}
+	(
+		outPhotoneo3DSensor: con_0becbfa0_3f2e_4115_b47e_ef99790aa0cd
+	)
+
+	//Trigger camera - send software trigger to the camera.
+	//:HIDDENPORT[inCommandName] TRUE
+	//:HIDDENPORT[inActivationMode] TRUE
+	//:HIDDENPORT[inVerifyAccess] TRUE
+	GigEVision_ExecuteCommand
+	(
+		inAddress: con_0becbfa0_3f2e_4115_b47e_ef99790aa0cd
+		inCommandName: "TriggerSoftware"
+		inActivationMode: WhenTrue
+		inActivation: True
+		inVerifyAccess: True
+	)
+
+	//Get images from camera. Ths tool is a loop generator - it will be executed many times.
+	//:HIDDENPORT[inPixelFormat] TRUE
+	//:HIDDENPORT[inInputQueueSize] TRUE
+	//:HIDDENPORT[inTimeout] TRUE
+	//:HIDDENPORT[outFrameID] TRUE
+	//:HIDDENPORT[outTimestamp] TRUE
+	GigEVision_GrabMultiPartImage
+	(
+		inAddress: con_0becbfa0_3f2e_4115_b47e_ef99790aa0cd
+		inPixelFormat: Nil
+		inInputQueueSize: 1
+		inTimeout: 5000
+		outFramePart1: con_38ef77cb_5292_432c_acd4_f0940f2fcaa3
+		outFramePart2: con_c81bb55e_de71_449d_aad2_f5c2f36f43ea
+		outFramePart3: con_ad15121c_aa34_45bc_b065_713c26659279
+		outFramePart4: con_354a380d_5908_423a_8937_aa917da0db59
+		outFrameID: Nil
+		outTimestamp: Nil
+	)
+
+	CalculatePointCloud
+	(
+		inRange: con_c81bb55e_de71_449d_aad2_f5c2f36f43ea
+		inReprojection: con_ad15121c_aa34_45bc_b065_713c26659279
+	)
+
+section PROCESS:
+	//In the Process section all image / data processing should be handled
+
+	//Create "Point3DGrid" and "Surface" from distance ( depth ) image. Scale and offsets have to be put manually.
+	disabled DecodeFrame
+	(
+		inFrameType: "Point_Cloud_Distance"
+		inFrame: con_354a380d_5908_423a_8937_aa917da0db59
+		outColorImage: Nil
+		outPoint3DGrid: Nil
+		outSurface: Nil
+	)
+
+	//Create "Point3DGrid" and "Surface" from XYZ image.
+	DecodeFrame
+	(
+		inFrameType: "Point_Cloud_Distance"
+		inFrame: con_c81bb55e_de71_449d_aad2_f5c2f36f43ea
+		outColorImage: Nil
+		outPoint3DGrid: Nil
+		outSurface: Nil
+	)
+
+	//Create color image ( 8 bit ) from color image ( 10 bit ).
+	DecodeFrame
+	(
+		inFrameType: "Color_Image"
+		inFrame: con_38ef77cb_5292_432c_acd4_f0940f2fcaa3
+		outColorImage: Nil
+		outPoint3DGrid: Nil
+		outSurface: Nil
+	)
+
+section FINALIZE:
+	//Trigger camera - send software trigger to the camera.
+	//:HIDDENPORT[inCommandName] TRUE
+	//:HIDDENPORT[inActivationMode] TRUE
+	//:HIDDENPORT[inVerifyAccess] TRUE
+	GigEVision_ExecuteCommand
+	(
+		inAddress: con_0becbfa0_3f2e_4115_b47e_ef99790aa0cd
+		inCommandName: "AcquisitionStop"
+		inActivationMode: WhenTrue
+		inActivation: True
+		inVerifyAccess: True
+	)
+
+	//In the Finalize section program should finalize all connections ( it is excuted once at the end of the program ).
+}
+
+//:SECTIONSVISIBILITY Visible
+public MainLoop()
+{
+
+section INITIALIZE:
+	parameters read
+	{
+		outputs: Photoneo3DSensor
+	}
+	(
+		outPhotoneo3DSensor: Nil
+	)
+
+	//Set trigger type to software
+	//:HIDDENPORT[inScope] TRUE
+	//:HIDDENPORT[inParameterName] TRUE
+	//:HIDDENPORT[inVerify] TRUE
+	GenICam_SetEnumParameter
+	(
+		inAddress: GenAddress()
+		inScope: Device
+		inParameterName: "PhotoneoTriggerMode"
+		inValue: "Software"
+		inVerify: True
+	)
+
+	//Change UseFixedDataOrdering
+	//:HIDDENPORT[inScope] TRUE
+	//:HIDDENPORT[inParameterName] TRUE
+	//:HIDDENPORT[inVerify] TRUE
+	disabled GenICam_SetBoolParameter
+	(
+		inAddress: GenAddress()
+		inScope: Device
+		inParameterName: "UseFixedDataOrdering"
+		inValue: False
+		inVerify: False
+	)
+
+section ACQUIRE:
+	//:HIDDENPORT[inPixelFormat] TRUE
+	//:HIDDENPORT[inInputQueueSize] TRUE
+	GenICam_StartAcquisition
+	(
+		inAddress: GenAddress()
+		inPixelFormat: ""
+		inInputQueueSize: 1
+	)
+
+	//Trigger camera
+	//:HIDDENPORT[inScope] TRUE
+	//:HIDDENPORT[inCommandName] TRUE
+	//:HIDDENPORT[inActivationMode] TRUE
+	//:HIDDENPORT[inVerifyAccess] TRUE
+	GenICam_ExecuteCommand
+	(
+		inAddress: GenAddress()
+		inScope: Device
+		inCommandName: "TriggerFrame"
+		inActivationMode: WhenTrue
+		inActivation: True
+		inVerifyAccess: True
+	)
+
+	//:HIDDENPORT[inPixelFormat] TRUE
+	//:HIDDENPORT[inInputQueueSize] TRUE
+	//:HIDDENPORT[inTimeout] TRUE
+	//:HIDDENPORT[outFrameID] FALSE
+	//:HIDDENPORT[outTimestamp] TRUE
+	GenICam_GrabMultiPartImage
+	(
+		inAddress: GenAddress()
+		inPixelFormat: Nil
+		inInputQueueSize: 1
+		inTimeout: 5000
+		outFramePart1: Nil
+		outFramePart2: Nil
+		outFramePart3: Nil
+		outFramePart4: Nil
+		outFrameID: Nil
+		outTimestamp: Nil
+	)
+}
+
+public InitializeCamera() step
+{
+	//Read DeviceId from memory.
+	//This parameter "Photoneo3DSensor" can be edited in the "Project Explorer" window.
+	parameters read
+	{
+		outputs: Photoneo3DSensor
+	}
+	(
+		outPhotoneo3DSensor: con_c9b3a190_8d86_47b4_a793_d2c685d81361
+	)
+
+	//Set camera trigger type to "Software".
+	//:HIDDENPORT[inParameterName] TRUE
+	//:HIDDENPORT[inVerify] TRUE
+	GigEVision_SetEnumParameter
+	(
+		inAddress: con_c9b3a190_8d86_47b4_a793_d2c685d81361
+		inParameterName: "AcquisitionMode"
+		inValue: "Continuous"
+		inVerify: True
+	)
+
+	//Change parameter "UseFixedDataOrdering" to false.
+	//:HIDDENPORT[inParameterName] TRUE
+	//:HIDDENPORT[inVerify] TRUE
+	disabled GigEVision_SetBoolParameter
+	(
+		inAddress: con_c9b3a190_8d86_47b4_a793_d2c685d81361
+		inParameterName: "UseFixedDataOrdering"
+		inValue: False
+		inVerify: True
+	)
+
+	//Start camera acquisition - pixel format should not be specified.
+	//:HIDDENPORT[inPixelFormat] TRUE
+	//:HIDDENPORT[inInputQueueSize] TRUE
+	GigEVision_StartAcquisition
+	(
+		inAddress: con_c9b3a190_8d86_47b4_a793_d2c685d81361
+		inPixelFormat: ""
+		inInputQueueSize: 1
+	)
+}
+
+public VariantMacro_1(String inName) step(inName)
+{
+"dwa":
+
+"raz":
+
+default:
+}
+
+public DecodeFrame(String inFrameType, Image inFrame, Image outColorImage, Point3DGrid outPoint3DGrid, Surface outSurface) step(inFrameType)
+{
+"Color_Image":
+	ConvertPixelType
+	(
+		inImage: inFrame
+		inRoi: Nil
+		inNewType: UInt8
+		inDepthDelta: -2
+		outImage: con_812e53f0_fd63_47be_9640_881798eec8f5
+	)
+
+	outColorImage = con_812e53f0_fd63_47be_9640_881798eec8f5
+
+	outPoint3DGrid = Point3DGrid()
+
+	outSurface = Surface()
+
+"Point_Cloud_Distance":
+	//Detect valid points ( distance >0 ).
+	//:HIDDENPORT[inHysteresis] TRUE
+	ThresholdToRegion
+	(
+		inImage: inFrame
+		inRoi: Nil
+		inMinValue: 0.000001
+		inMaxValue: Nil
+		inHysteresis: 0.000000
+		outRegion: con_24463616_df77_4208_bad0_ae7e1ca577b8
+	)
+
+	//Convert distance do Surface.
+	//:HIDDENPORT[inXOffset] TRUE
+	//:HIDDENPORT[inXScale] TRUE
+	//:HIDDENPORT[inYOffset] TRUE
+	//:HIDDENPORT[inYScale] TRUE
+	//:HIDDENPORT[inZOffset] TRUE
+	//:HIDDENPORT[inZScale] TRUE
+	MakeSurfaceFromImage
+	(
+		inImage: inFrame
+		inRoi: con_24463616_df77_4208_bad0_ae7e1ca577b8
+		inXOffset: 0.000000D
+		inXScale: 1.000000D
+		inYOffset: 0.000000D
+		inYScale: 1.000000D
+		inZOffset: 0.000000D
+		inZScale: 1.000000D
+		outSurface: con_421bbfac_e21a_4a04_9248_2911bb9deb87
+	)
+
+	outColorImage = Image()
+
+	outPoint3DGrid = con_421bbfac_e21a_4a04_9248_2911bb9deb87
+
+	outSurface = con_421bbfac_e21a_4a04_9248_2911bb9deb87
+
+"Point_Cloud_XYZ":
+	//Convert to Point
+	//:HIDDENPORT[inXCoordinateTransform] TRUE
+	//:HIDDENPORT[inYCoordinateTransform] TRUE
+	//:HIDDENPORT[inZCoordinateTransform] TRUE
+	CreatePoint3DGridFromImage
+	(
+		inImage: inFrame
+		inRoi: Nil
+		inXCoordinateTransform:
+			PointCloudCoordinateTransform
+			(
+				Offset: 0.000000D
+				ValueCoordinateTransform:
+					ImageValueCoordinateTransform()
+				LocationCoordinateTransform: Nil
+				Limits:
+					ValueLimits_f64()
+			)
+		inYCoordinateTransform:
+			PointCloudCoordinateTransform
+			(
+				Offset: 0.000000D
+				ValueCoordinateTransform:
+					ImageValueCoordinateTransform
+					(
+						ChannelIndex: 1
+						Scale: 1.000000D
+						InvalidValues:
+							{
+							}
+					)
+				LocationCoordinateTransform: Nil
+				Limits:
+					ValueLimits_f64()
+			)
+		inZCoordinateTransform:
+			PointCloudCoordinateTransform
+			(
+				Offset: 0.000000D
+				ValueCoordinateTransform:
+					ImageValueCoordinateTransform
+					(
+						ChannelIndex: 2
+						Scale: 1.000000D
+						InvalidValues:
+							{
+							}
+					)
+				LocationCoordinateTransform: Nil
+				Limits:
+					ValueLimits_f64()
+			)
+		outPoint3DGrid: con_5a15044e_2940_40e8_9474_da8c20e18a26
+	)
+
+	//:HIDDENPORT[inXCoordinateTransform] TRUE
+	//:HIDDENPORT[inYCoordinateTransform] TRUE
+	//:HIDDENPORT[inZCoordinateTransform] TRUE
+	//:HIDDENPORT[inCreatedSurfaceFormat] TRUE
+	CreateSurfaceFromImage
+	(
+		inImage: inFrame
+		inRoi: Nil
+		inXCoordinateTransform:
+			PointCloudCoordinateTransform
+			(
+				Offset: 0.000000D
+				ValueCoordinateTransform:
+					ImageValueCoordinateTransform()
+				LocationCoordinateTransform: Nil
+				Limits:
+					ValueLimits_f64()
+			)
+		inYCoordinateTransform:
+			PointCloudCoordinateTransform
+			(
+				Offset: 0.000000D
+				ValueCoordinateTransform:
+					ImageValueCoordinateTransform
+					(
+						ChannelIndex: 1
+						Scale: 1.000000D
+						InvalidValues:
+							{
+							}
+					)
+				LocationCoordinateTransform: Nil
+				Limits:
+					ValueLimits_f64()
+			)
+		inZCoordinateTransform:
+			PointCloudCoordinateTransform
+			(
+				Offset: 0.000000D
+				ValueCoordinateTransform:
+					ImageValueCoordinateTransform
+					(
+						ChannelIndex: 2
+						Scale: 1.000000D
+						InvalidValues:
+							{
+							}
+					)
+				LocationCoordinateTransform: Nil
+				Limits:
+					ValueLimits_f64()
+			)
+		inCreatedSurfaceFormat:
+			OutputSurfaceFormat
+			(
+				XScale: 1.000000D
+				YScale: 1.000000D
+				ZScale: 1.000000D
+				ZOffset: 0.000000D
+				PointType: UInt16
+				MultipointHeight: Mean
+			)
+		outSurface: con_008d06f4_d62f_4177_9c70_18a8eb09701f
+		diagSurfaceValidPointsRegion: Nil
+		diagPoint3DGrid: Nil
+	)
+
+	outColorImage = Image()
+
+	outPoint3DGrid = con_5a15044e_2940_40e8_9474_da8c20e18a26
+
+	outSurface = con_008d06f4_d62f_4177_9c70_18a8eb09701f
+
+default:
+
+	outColorImage = Image()
+
+	outPoint3DGrid = Point3DGrid()
+
+	outSurface = Surface()
+}
+
+//:LABELDATASOURCE[inRange] ImageZ
+public CalculatePointCloud(Image? inRange, Image? inReprojection) step
+{
+	SplitChannels
+	(
+		inImage: inReprojection
+		outMonoImage1: con_1f45f262_235b_4244_92b4_15dd0bf499a5
+		outMonoImage2: con_2762c531_157b_47bc_8996_de0ca507ef0d
+		outMonoImage3: Nil
+		outMonoImage4: Nil
+	)
+
+	//:HIDDENPORT[inScale] TRUE
+	//:LABELDATASOURCE[outImage] ImageX
+	MultiplyImages
+	(
+		inImage1: inRange
+		inImage2: con_1f45f262_235b_4244_92b4_15dd0bf499a5
+		inRoi: Nil
+		inScale: 1.000000
+		outImage: con_6a0d7c47_4468_4bea_b682_9bc2a86e5231
+	)
+
+	//:HIDDENPORT[inScale] TRUE
+	//:LABELDATASOURCE[outImage] ImageY
+	MultiplyImages
+	(
+		inImage1: inRange
+		inImage2: con_2762c531_157b_47bc_8996_de0ca507ef0d
+		inRoi: Nil
+		inScale: 1.000000
+		outImage: con_ee4c5d5d_f0a2_4aed_8148_2f048dc7ce76
+	)
+
+	//:USELABEL[inMonoImage1]
+	//:USELABEL[inMonoImage2]
+	//:USELABEL[inMonoImage3]
+	MergeChannels
+	(
+		inMonoImage1: con_6a0d7c47_4468_4bea_b682_9bc2a86e5231
+		inMonoImage2: con_ee4c5d5d_f0a2_4aed_8148_2f048dc7ce76
+		inMonoImage3: inRange
+		inMonoImage4: Nil
+		outImage: con_20e59c80_c033_4876_a8b3_6b7facdee124
+	)
+
+	//:HIDDENPORT[inXCoordinateTransform] TRUE
+	//:HIDDENPORT[inYCoordinateTransform] TRUE
+	//:HIDDENPORT[inZCoordinateTransform] TRUE
+	CreatePoint3DGridFromImage
+	(
+		inImage: con_20e59c80_c033_4876_a8b3_6b7facdee124
+		inRoi: Nil
+		inXCoordinateTransform:
+			PointCloudCoordinateTransform
+			(
+				Offset: 0.000000D
+				ValueCoordinateTransform:
+					ImageValueCoordinateTransform()
+				LocationCoordinateTransform: Nil
+				Limits:
+					ValueLimits_f64()
+			)
+		inYCoordinateTransform:
+			PointCloudCoordinateTransform
+			(
+				Offset: 0.000000D
+				ValueCoordinateTransform:
+					ImageValueCoordinateTransform
+					(
+						ChannelIndex: 1
+						Scale: 1.000000D
+						InvalidValues:
+							{
+							}
+					)
+				LocationCoordinateTransform: Nil
+				Limits:
+					ValueLimits_f64()
+			)
+		inZCoordinateTransform:
+			PointCloudCoordinateTransform
+			(
+				Offset: 0.000000D
+				ValueCoordinateTransform:
+					ImageValueCoordinateTransform
+					(
+						ChannelIndex: 2
+						Scale: 1.000000D
+						InvalidValues:
+							{
+							}
+					)
+				LocationCoordinateTransform: Nil
+				Limits:
+					ValueLimits_f64()
+			)
+		outPoint3DGrid: con_993bc70e_7571_440e_9b4e_6c5edd7ceeae
+	)
+}
+
