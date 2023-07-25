@@ -12,6 +12,10 @@ You may start your development based on one of the examples and modify it to sui
 
 Zebra Aurora Vision™ Studio is machine vision software that is based on visual data flow programming and comes with a comprehensive set of image analysis tools. Typical applications include industrial quality inspection and robot guidance, using both ruler-based and deep neural networks-based algorithms. Find out more at the [Zebra Aurora Vision Studio](https://www.adaptive-vision.com/en/).
 
+- [Zebra Aurora™ Vision Studio Support for Photoneo 3D Sensors using GenICam User Guide](https://photoneo.com/kb/avs-genicam)
+- [Zebra Aurora™ Vision Studio Support for Photoneo 3D Sensors using GigE Vision User Guide](https://photoneo.com/kb/avs-gige)
+
+
 #### Support
 Visit [www.photoneo.com](https://www.photoneo.com/) for the most up-to-date information and documents. If you encounter any issues while using the examples, please do not hesitate to contact our dedicated Support team at our [Help Center](https://www.photoneo.com/Help-Center) for prompt assistance.
 
