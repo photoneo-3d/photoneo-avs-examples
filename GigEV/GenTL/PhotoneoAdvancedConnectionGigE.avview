@@ -1,0 +1,74 @@
+﻿<ViewSets Current="Custom2">
+  <ViewSet Name="Custom1">
+    <HSplit>
+      <VSplit>
+        <Views Width="0.498" Height="0.496">
+          <View Type="ImageView">
+            <Output Name="con_38ef77cb_5292_432c_acd4_f0940f2fcaa3" Macro="Main" Start="Main" Instance="0" />
+            <ViewState>
+              <ViewMode Mode="Manual" Scale="0.2" X="291" Y="145" />
+            </ViewState>
+          </View>
+        </Views>
+        <Views Width="0.498" Height="0.496">
+          <View Type="ImageView">
+            <Output Name="con_c81bb55e_de71_449d_aad2_f5c2f36f43ea" Macro="Main" Start="Main" Instance="0" />
+            <ViewState>
+              <ViewMode Mode="Manual" Scale="0.353333333333333" X="69" Y="48" />
+            </ViewState>
+          </View>
+        </Views>
+      </VSplit>
+      <VSplit>
+        <Views Width="0.498" Height="0.496">
+          <View Type="ImageView">
+            <Output Name="con_ad15121c_aa34_45bc_b065_713c26659279" Macro="Main" Start="Main" Instance="0" />
+          </View>
+        </Views>
+        <Views Width="0.498" Height="0.496">
+          <View Type="ImageView">
+            <Output Name="con_354a380d_5908_423a_8937_aa917da0db59" Macro="Main" Start="Main" Instance="0" />
+          </View>
+        </Views>
+      </VSplit>
+    </HSplit>
+  </ViewSet>
+  <ViewSet Name="Custom2">
+    <HSplit>
+      <VSplit>
+        <Views Width="0.496" Height="0.496">
+          <View Type="ImageView">
+            <Output Name="con_38ef77cb_5292_432c_acd4_f0940f2fcaa3" Macro="Main" Start="Main" Instance="0" />
+          </View>
+        </Views>
+        <Views Width="0.498" Height="0.496">
+          <View Type="ImageView">
+            <Output Name="con_c81bb55e_de71_449d_aad2_f5c2f36f43ea" Macro="Main" Start="Main" Instance="0" />
+          </View>
+        </Views>
+      </VSplit>
+      <VSplit>
+        <Views Width="0.496" Height="0.496">
+          <View Type="ImageView">
+            <Output Name="con_ad15121c_aa34_45bc_b065_713c26659279" Macro="Main" Start="Main" Instance="0" />
+            <ViewState>
+              <ViewMode Mode="Manual" Scale="0.666666666666667" X="123" Y="-139" />
+            </ViewState>
+          </View>
+        </Views>
+        <Views Width="0.498" Height="0.496">
+          <View Type="View3D">
+            <Output Name="con_993bc70e_7571_440e_9b4e_6c5edd7ceeae" Macro="CalculatePointCloud" Start="Main" Instance="0" />
+            <ViewState>
+              <View Yaw="3.6878" Pitch="0.6628" Dist="595.1274" CenterX="-45.3837" CenterY="-50.7396" CenterZ="223.0769" />
+              <Config ShowInfo="True" ShowIndices="False" ShowBBox="False" Probe="False" GridMode="XY" Orientation="RHZUp" ProjectionMode="Perspective" ColoringMode="ZAxis" PointSize="0.5625" />
+            </ViewState>
+          </View>
+        </Views>
+      </VSplit>
+    </HSplit>
+  </ViewSet>
+  <BreakPoints>
+    <UserBreakPoint Macro="CalculatePointCloud" Variant="0" Position="5" />
+  </BreakPoints>
+</ViewSets>

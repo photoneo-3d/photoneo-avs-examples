@@ -1,0 +1,6 @@
+﻿<AuroraVisionProject Name="PhotoneoSimpleConnectionGenICam" Version="5.3.3" Revision="93898" Product="Professional" StartUpProgramName="Main">
+  <Files>
+    <Program Path="PhotoneoSimpleConnectionGenICam.avcode" />
+    <View Path="PhotoneoSimpleConnectionGenICam.avview" />
+  </Files>
+</AuroraVisionProject>
