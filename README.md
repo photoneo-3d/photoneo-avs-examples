@@ -4,7 +4,6 @@
 #### Prerequisites
 
 Zebra Aurora Vision™ Studio 5.2 or above.
-![image](https://www.zebra.com/content/dam/zebra_new_ia/en-us/solutions-verticals/product/OEM%20Products/oem-software/aurora-for-oem/photography-website/zebra-aurora-vision-photography-website-16x9-800x450.jpg)
 
 ## Introduction
 This repository provides the building blocks necessary for developing your custom application in Zebra Aurora Vision™ Studio for working with [Photoneo](https://www.photoneo.com/) devices. 
